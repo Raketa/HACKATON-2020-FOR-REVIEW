@@ -1,0 +1,16 @@
+image: maven:3.6.1
+
+pipelines:
+  default:
+    - step:
+        script: # Modify the commands below to build your repository.
+          - mvn -version
+          - mvn compile
+          - mvn package
+          - scp -r target/HelloWorld-0.0.1-SNAPSHOT.war "ubuntu@ec2-18-189-178-202.us-east-2.compute.amazonaws.com:ROOT.war"
+          - ssh ubuntu@ec2-18-189-178-202.us-east-2.compute.amazonaws.com "sudo rm -f /var/lib/tomcat8/webapps/*.war"
+          - ssh ubuntu@ec2-18-189-178-202.us-east-2.compute.amazonaws.com "sudo rm -rf /var/lib/tomcat8/webapps/ROOT/"
+          - ssh ubuntu@ec2-18-189-178-202.us-east-2.compute.amazonaws.com "sudo mv ROOT.war /var/lib/tomcat8/webapps/"
+
+        artifacts:
+          - target/**

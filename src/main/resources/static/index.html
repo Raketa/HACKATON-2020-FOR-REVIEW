@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="css/index.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
+</head>
+<body>
+
+
+<div id="chat">
+    <div class="input"><input id="field" onchange="send(this)"/></div>
+    <div class="content"></div>
+</div>
+
+<script type="text/javascript">
+    (function register() {
+        fetch('/api/register', {
+            method: 'POST',
+            body: JSON.stringify({
+                "username": "user",
+                "password": "user",
+                "role": "CLIENT"
+            })
+        })
+            .then(data => data.json())
+            .then(data => {
+                console.log(data);
+                auth();
+            })
+            .catch(data => {
+                document.querySelector('#chat>.content')
+                    .insertAdjacentHTML(
+                        'afterbegin',
+                        `<p class="all">${data}</p>`
+                    );
+            });
+    });
+
+    auth();
+
+    function auth() {
+        console.log(" before")
+        let formData = new FormData();
+        formData.append('username', 'user');
+        formData.append('password', 'user');
+
+        fetch('/login', {
+            method: 'POST',
+            "Content-Type": "multipart/form-data;boundary='",
+            body: formData,
+            credentials: "include"
+        })
+            .then(data => data.json())
+            .then(data => {
+                connectSockJS();
+            })
+            .catch(data => {
+                document.querySelector('#chat>.content')
+                    .insertAdjacentHTML(
+                        'afterbegin',
+                        `<p class="all">${data}</p>`
+                    );
+            });
+        console.log(" after")
+
+    }
+
+    function connectSockJS() {
+        let socket = new SockJS('/chat');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+        stompClient.connect({}, function (frame) {
+            console.log(frame);
+
+            stompClient.subscribe('/topic', function (greeting) {
+                document.querySelector('#chat>.input>input').value = '';
+                document.querySelector('#chat>.content')
+                    .insertAdjacentHTML(
+                        'afterbegin',
+                        `<p class="all">${greeting.body}</p>`
+                    );
+            });
+        });
+    }
+
+    function send(el) {
+        if (el.value.includes("all")) {
+            stompClient.send("/topic", {}, el.value);
+        } else {
+            stompClient.send("/app/message", {}, el.value);
+            document.querySelector('#chat>.content')
+                .insertAdjacentHTML('afterbegin', `<p>${el.value}</p>`);
+        }
+        document.querySelector('#chat>.input>input').value = '';
+    }
+
+</script>
+</body>
+</html>

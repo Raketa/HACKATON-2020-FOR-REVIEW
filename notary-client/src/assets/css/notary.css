@@ -1,0 +1,25 @@
+.landing-top-background {
+    background: url(https://res.online.sberbank.ru/ESA/sbol/r-1.119.2//img/slide1--NcrzM.jpg);
+    background-size: cover;
+    background-position-y: -242px;
+}
+
+.laning-sberbank-notary-maintext
+{
+    text-shadow: #000000 0 0 1px;
+    font-weight: 900;
+    color: green;
+    font-size: x-large;
+}
+
+.color-black-size-larger
+{
+    color: black;
+    font-size: larger;
+}
+
+.chat-scroll
+{
+    overflow-y: scroll;
+    max-height: 600px;
+}

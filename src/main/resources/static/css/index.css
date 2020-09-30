@@ -1,0 +1,30 @@
+body {
+    background-color: darkcyan;
+}
+
+p {
+    background: cornsilk;
+    padding: 13px;
+    margin: 1px 0;
+}
+
+#chat {
+    width: 100%;
+    text-align: center;
+}
+
+#chat>.input {
+    display: inline-block;
+    margin: 0 auto;
+    width: 50%;
+    text-align: center;
+    padding: 13px;
+}
+
+#chat>.content {
+
+}
+
+.all {
+    color: cadetblue;
+}
